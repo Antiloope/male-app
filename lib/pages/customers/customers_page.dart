@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:male_naturapp/pages/customers/new_customer_page.dart';
 import 'package:male_naturapp/services/customer/customer_service.dart';
 import 'package:male_naturapp/services/customer/customer_service_provider.dart';
 
-import '../models/customer.dart';
+import '../../models/customer.dart';
 
 class CustomersPage extends StatefulWidget {
   CustomersPage({super.key});
@@ -20,11 +21,9 @@ class _CustomersPageState extends State<CustomersPage> {
   late final CustomerService customerService;
   
   List<Customer> _customers = [];
-  
-  void _saveCustomer() {
-    customerService.save(Customer(
-      name: 'Marga',
-      phone: 12345,));
+
+  void _newCustomer() {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => NewCustomerPage()));
   }
 
   void _deleteItem(int id) async {
@@ -102,10 +101,10 @@ class _CustomersPageState extends State<CustomersPage> {
             position: RelativeRect.fromLTRB(100.0, 600.0, 20.0, 0.0),
             items: [
               PopupMenuItem(
-                child: Icon(Icons.delete),
-              ),
-              PopupMenuItem(
-                child: Icon(Icons.add),
+                child: IconButton(
+                    onPressed: _newCustomer,
+                    icon: Icon(Icons.add)
+                ),
               ),
             ],
             elevation: 8.0);

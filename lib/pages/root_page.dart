@@ -3,7 +3,7 @@ import 'package:male_naturapp/pages/finances_page.dart';
 import 'package:male_naturapp/pages/sales_page.dart';
 import 'package:male_naturapp/pages/stock_page.dart';
 import 'home_page.dart';
-import 'customers_page.dart';
+import 'customers/customers_page.dart';
 
 enum Page {
   clients,
