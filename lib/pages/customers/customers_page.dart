@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:male_naturapp/models/customer.dart';
+import 'package:male_naturapp/pages/customers/customer_details_page.dart';
 import 'package:male_naturapp/pages/customers/new_customer_page.dart';
 import 'package:male_naturapp/services/customer/customer_service.dart';
 import 'package:male_naturapp/services/customer/customer_service_provider.dart';
 
-import '../../models/customer.dart';
 
 class CustomersPage extends StatefulWidget {
   CustomersPage({super.key});
@@ -22,8 +23,14 @@ class _CustomersPageState extends State<CustomersPage> {
   
   List<Customer> _customers = [];
 
-  void _newCustomer() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => NewCustomerPage()));
+  Future<void> _newCustomer() async {
+    final result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => NewCustomerPage()));
+    if (result != null && result == true) {
+      var customers = await customerService.getAllCustomers();
+      setState(() {
+        _customers = customers;
+      });
+    }
   }
 
   void _deleteItem(int id) async {
@@ -32,6 +39,15 @@ class _CustomersPageState extends State<CustomersPage> {
     setState(() {
       _customers = customers;
     });
+  }
+  void _customerDetails(int id) async {
+    final result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => CustomerDetailsPage(customerId: id)));
+    if (result != null && result == true) {
+      var customers = await customerService.getAllCustomers();
+      setState(() {
+        _customers = customers;
+      });
+    }
   }
 
   @override
@@ -65,23 +81,28 @@ class _CustomersPageState extends State<CustomersPage> {
                 itemBuilder: (BuildContext context, int index) {
                   return SizedBox(
                     height: 50,
-                    child: Card(
-                      color: Theme.of(context).colorScheme.primaryContainer.withAlpha(100),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(_customers[index].name)),
-                          Expanded(
-                            child: Text(_customers[index].id.toString())),
-                          Expanded(
-                            child: IconButton(
-                                onPressed: () {
-                                  _deleteItem(_customers[index].id);
-                                },
-                                icon: Icon(Icons.delete)),
-                          ),
-                        ],
+                    child: GestureDetector(
+                      onTap: () {
+                        _customerDetails(_customers[index].id);
+                      },
+                      child: Card(
+                        color: Theme.of(context).colorScheme.primaryContainer.withAlpha(100),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(_customers[index].name)),
+                            Expanded(
+                              child: Text(_customers[index].id.toString())),
+                            Expanded(
+                              child: IconButton(
+                                  onPressed: () {
+                                    _deleteItem(_customers[index].id);
+                                  },
+                                  icon: Icon(Icons.delete)),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );
@@ -91,24 +112,8 @@ class _CustomersPageState extends State<CustomersPage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showMenu(
-            color: Colors.transparent,
-            shadowColor: Colors.transparent,
-            surfaceTintColor: Colors.transparent,
-            constraints: BoxConstraints(maxWidth: 50.0),
-            context: context,
-            position: RelativeRect.fromLTRB(100.0, 600.0, 20.0, 0.0),
-            items: [
-              PopupMenuItem(
-                child: IconButton(
-                    onPressed: _newCustomer,
-                    icon: Icon(Icons.add)
-                ),
-              ),
-            ],
-            elevation: 8.0);
-        }
+        onPressed: _newCustomer,
+        child: Icon(Icons.add),
       ),
     );
   }

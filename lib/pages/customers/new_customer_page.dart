@@ -18,14 +18,16 @@ class _NewCustomerPageState extends State<NewCustomerPage> {
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
 
-  void _createCustomer() async {
-    _formKey.currentState!.validate();
-    await customerService.save(
-      Customer(
-        name: _nameController.text,
-        phone: int.parse(_phoneController.text),
-      )
-    );
+  void _createCustomer() {
+    if (_formKey.currentState!.validate()) {
+      customerService.save(
+          Customer(
+            name: _nameController.text,
+            phone: int.parse(_phoneController.text),
+          )
+      );
+      Navigator.of(context).pop(true);
+    }
   }
 
   @override

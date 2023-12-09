@@ -81,4 +81,19 @@ class CustomerServiceSqlite implements CustomerService {
 
     await database.delete(_customerTableName, where: '$_customerIdColumnName = $id');
   }
+
+  @override
+  Future<Customer> getCustomerById(int id) async {
+    Database database = DatabaseHelper().getConnection();
+
+    final List<Map<String, dynamic>> maps = await database.query(_customerTableName, where: "$_customerIdColumnName = $id");
+
+    return List.generate(maps.length, (i) {
+      return Customer(
+        id: maps[i][_customerIdColumnName] as int,
+        name: maps[i][_customerNameColumnName] as String,
+        phone: maps[i][_customerPhoneColumnName] as int,
+      );
+    })[0];
+  }
 }
