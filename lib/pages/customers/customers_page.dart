@@ -83,7 +83,7 @@ class _CustomersPageState extends State<CustomersPage> {
                     height: 50,
                     child: GestureDetector(
                       onTap: () {
-                        _customerDetails(_customers[index].id);
+                        _customerDetails(_customers[index].id!);
                       },
                       child: Card(
                         color: Theme.of(context).colorScheme.primaryContainer.withAlpha(100),
@@ -97,7 +97,7 @@ class _CustomersPageState extends State<CustomersPage> {
                             Expanded(
                               child: IconButton(
                                   onPressed: () {
-                                    _deleteItem(_customers[index].id);
+                                    _deleteItem(_customers[index].id!);
                                   },
                                   icon: Icon(Icons.delete)),
                             ),

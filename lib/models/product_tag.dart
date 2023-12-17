@@ -1,11 +1,9 @@
-class Customer {
+class ProductTag {
   int? id;
   final String name;
-  final int phone;
 
-  Customer({
+  ProductTag({
     this.id,
     required this.name,
-    required this.phone,
   });
 }

@@ -28,10 +28,86 @@ class CustomerDetailsPage extends StatelessWidget {
               title: Center(child: Text(customer.name, style: TextStyle(fontWeight: FontWeight.bold))),
               backgroundColor: Theme.of(context).colorScheme.secondary,
             ),
-            body: ListView.builder(
+            body: ListView(
               padding: EdgeInsets.all(10),
-              itemBuilder: (BuildContext context, int index) {  },
-
+              children: [
+                Card(
+                  margin: EdgeInsets.all(6),
+                  color: Colors.white70,
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(child: Center(child: Text('Información personal', style: TextStyle(fontWeight: FontWeight.bold)))),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Column(
+                              children: [
+                                Text('Nombre: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                Text(customer.name),
+                              ],
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Column(
+                              children: [
+                                Text('Teléfono: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                Text(customer.phone.toString()),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Card(
+                  margin: EdgeInsets.all(6),
+                  color: Colors.white70,
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(child: Center(child: Text('Últimas compras', style: TextStyle(fontWeight: FontWeight.bold)))),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Card(
+                  margin: EdgeInsets.all(6),
+                  color: Colors.white70,
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(child: Center(child: Text('Fidelizaciones', style: TextStyle(fontWeight: FontWeight.bold)))),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           );
         }

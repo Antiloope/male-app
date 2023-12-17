@@ -73,36 +73,37 @@ class _RootPageState extends State<RootPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text(_title, style: TextStyle(fontWeight: FontWeight.bold))),
-        backgroundColor: Theme.of(context).colorScheme.secondary,
+        title: Center(child: Text(_title, style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onPrimary))),
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: _currentPage,
       bottomNavigationBar: BottomNavigationBar(
-        fixedColor: Theme.of(context).primaryColor,
+        unselectedItemColor: Theme.of(context).colorScheme.onSecondary,
+        selectedItemColor: Theme.of(context).colorScheme.onSecondary,
         currentIndex: _currentIndex,
         items: [
           BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            backgroundColor: Theme.of(context).colorScheme.secondary,
             icon: CustomersPage.icon,
             label: CustomersPage.title,
           ),
           BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            backgroundColor: Theme.of(context).colorScheme.secondary,
             icon: StockPage.icon,
             label: StockPage.title,
           ),
           BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            backgroundColor: Theme.of(context).colorScheme.secondary,
             icon: HomePage.icon,
             label: HomePage.title,
           ),
           BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            backgroundColor: Theme.of(context).colorScheme.secondary,
             icon: SalesPage.icon,
             label: SalesPage.title,
           ),
           BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            backgroundColor: Theme.of(context).colorScheme.secondary,
             icon: FinancesPage.icon,
             label: FinancesPage.title,
           ),
