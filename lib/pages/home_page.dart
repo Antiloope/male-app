@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:male_naturapp/pages/customers/customers_page.dart';
+import 'package:male_naturapp/pages/products/products_page.dart';
+import 'package:male_naturapp/widgets/grid_button.dart';
+
+import 'products/categories/categories_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -8,48 +13,9 @@ class HomePage extends StatelessWidget {
 
   List<Widget> _generateQuickAccessList(BuildContext context) {
     return [
-      Container(
-        margin: EdgeInsets.all(8),
-        decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: BorderRadius.circular(25),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(60),
-                blurRadius: 5,
-                offset: Offset(2,2),
-              )
-            ]
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.person),
-            Text("Clientes"),
-          ],
-        ),
-      ),
-      Container(
-        margin: EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(25),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(60),
-              blurRadius: 5,
-              offset: Offset(2,2),
-            )
-          ]
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.data_array),
-            Text("Productos"),
-          ],
-        ),
-      ),
+      GridButton(text: "Clientes", icon: Icon(Icons.person), page: CustomersPage()),
+      GridButton(text: "Productos", icon: Icon(Icons.data_array), page: ProductsPage()),
+      GridButton(text: "Categorías", icon: Icon(Icons.collections_bookmark), page: CategoriesPage()),
     ];
   }
 

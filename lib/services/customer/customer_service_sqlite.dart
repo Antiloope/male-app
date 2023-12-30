@@ -13,13 +13,17 @@ class CustomerServiceSqlite implements CustomerService {
 
   static const String _customerTableName = 'customers';
 
-  static void createTable(Database database, int version) {
+  static void initializeTables(Database database, int version) {
     database.execute(
       'CREATE TABLE $_customerTableName('
           '$_customerIdColumnName INTEGER PRIMARY KEY AUTOINCREMENT, '
           '$_customerNameColumnName TEXT, '
           '$_customerPhoneColumnName INTEGER)',
     );
+  }
+
+  static void upgradeTables(Database database, int oldVersion, int newVersion) {
+
   }
 
   static Map<String, dynamic> customerToMap(Customer customer) {

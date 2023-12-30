@@ -1,52 +1,51 @@
 import 'package:flutter/material.dart';
-import 'package:male_naturapp/models/customer.dart';
-import 'package:male_naturapp/pages/customers/customer_details_page.dart';
-import 'package:male_naturapp/pages/customers/new_customer_page.dart';
-import 'package:male_naturapp/services/customer/customer_service.dart';
-import 'package:male_naturapp/services/customer/customer_service_provider.dart';
+import 'package:male_naturapp/models/product.dart';
+import 'package:male_naturapp/pages/products/new_product_page.dart';
+import 'package:male_naturapp/pages/products/product_details_page.dart';
+import 'package:male_naturapp/services/product/product_service.dart';
+import 'package:male_naturapp/services/product/product_service_provider.dart';
 import 'package:male_naturapp/widgets/app_bar_frame.dart';
 
-class CustomersPage extends StatefulWidget {
-  CustomersPage({super.key});
-  
-  static const Icon icon = Icon(Icons.person);
-  static const String title = "Clientes";
+class ProductsPage extends StatefulWidget {
+  ProductsPage({super.key});
+
+  static String title = "Productos";
 
   @override
-  _CustomersPageState createState() => _CustomersPageState();
+  _ProductsPageState createState() => _ProductsPageState();
 }
 
-class _CustomersPageState extends State<CustomersPage> {
-  _CustomersPageState() : customerService = DefaultCustomerServiceProvider.getDefaultCustomerService();
-  
-  late final CustomerService customerService;
-  
-  List<Customer> _customers = [];
+class _ProductsPageState extends State<ProductsPage> {
+  _ProductsPageState() : productService = DefaultProductServiceProvider.getDefaultProductService();
 
-  Future<void> _newCustomer() async {
-    final result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => NewCustomerPage()));
+  late final ProductService productService;
+
+  List<Product> _products = [];
+
+  Future<void> _newProduct() async {
+    final result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => NewProductPage()));
     if (result != null && result == true) {
-      var customers = await customerService.getAllCustomers();
+      var products = await productService.getAllProducts();
       setState(() {
-        _customers = customers;
+        _products = products;
       });
     }
   }
 
   void _deleteItem(int id) async {
-    customerService.delete(id);
-    var customers = await customerService.getAllCustomers();
+    productService.delete(id);
+    var products = await productService.getAllProducts();
     setState(() {
-      _customers = customers;
+      _products = products;
     });
   }
 
-  void _customerDetails(int id) async {
-    final result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => CustomerDetailsPage(customerId: id)));
+  void _productDetails(int id) async {
+    final result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => ProductDetailsPage(productId: id)));
     if (result != null && result == true) {
-      var customers = await customerService.getAllCustomers();
+      var products = await productService.getAllProducts();
       setState(() {
-        _customers = customers;
+        _products = products;
       });
     }
   }
@@ -54,11 +53,11 @@ class _CustomersPageState extends State<CustomersPage> {
   @override
   Widget build(BuildContext context) {
     return AppBarFrame(
-      title: CustomersPage.title,
+      title: ProductsPage.title,
       body: Scaffold(
-        body: FutureBuilder<List<Customer>>(
-          future: customerService.getAllCustomers(),
-          builder: (BuildContext context, AsyncSnapshot<List<Customer>> snapshot) {
+        body: FutureBuilder<List<Product>>(
+          future: productService.getAllProducts(),
+          builder: (BuildContext context, AsyncSnapshot<List<Product>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return CircularProgressIndicator();
             }
@@ -66,18 +65,18 @@ class _CustomersPageState extends State<CustomersPage> {
               return Text('Error al cargar los datos');
             }
             else {
-              _customers = snapshot.data!;
+              _products = snapshot.data!;
               return RefreshIndicator(
                 onRefresh: () async {
-                  var customers = await customerService.getAllCustomers();
+                  var products = await productService.getAllProducts();
                   setState(() {
-                    _customers = customers;
+                    _products = products;
                   });
                   return Future(() => null);
                 },
                 child: ListView.builder(
                     padding: EdgeInsets.symmetric(vertical: 3),
-                    itemCount: _customers.length,
+                    itemCount: _products.length,
                     prototypeItem: SizedBox(
                       height: 50,
                     ),
@@ -86,7 +85,7 @@ class _CustomersPageState extends State<CustomersPage> {
                         height: 50,
                         child: GestureDetector(
                           onTap: () {
-                            _customerDetails(_customers[index].id!);
+                            _productDetails(_products[index].id!);
                           },
                           child: Card(
                             color: Theme.of(context).colorScheme.primaryContainer.withAlpha(100),
@@ -94,13 +93,13 @@ class _CustomersPageState extends State<CustomersPage> {
                             child: Row(
                               children: [
                                 Expanded(
-                                    child: Text(_customers[index].name)),
+                                    child: Text(_products[index].name)),
                                 Expanded(
-                                    child: Text(_customers[index].id.toString())),
+                                    child: Text(_products[index].id.toString())),
                                 Expanded(
                                   child: IconButton(
                                       onPressed: () {
-                                        _deleteItem(_customers[index].id!);
+                                        _deleteItem(_products[index].id!);
                                       },
                                       icon: Icon(Icons.delete)),
                                 ),
@@ -116,9 +115,10 @@ class _CustomersPageState extends State<CustomersPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _newCustomer,
+        onPressed: _newProduct,
         child: Icon(Icons.add),
       ),
     );
   }
+
 }

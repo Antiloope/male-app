@@ -1,15 +1,15 @@
 class Product {
   int? id;
   final String? externalId;
-  final String productName;
-  final String productDescription;
+  final String name;
+  final String description;
   final int category;
 
   Product({
     this.id,
-    required this.externalId,
-    required this.productName,
-    required this.productDescription,
+    this.externalId,
+    required this.name,
+    required this.description,
     required this.category,
   });
 }
