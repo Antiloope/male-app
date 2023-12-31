@@ -75,33 +75,30 @@ class _ProductsPageState extends State<ProductsPage> {
                   return Future(() => null);
                 },
                 child: ListView.builder(
-                    padding: EdgeInsets.symmetric(vertical: 3),
+                    padding: EdgeInsets.symmetric(vertical: 5),
                     itemCount: _products.length,
-                    prototypeItem: SizedBox(
-                      height: 50,
-                    ),
                     itemBuilder: (BuildContext context, int index) {
-                      return SizedBox(
-                        height: 50,
-                        child: GestureDetector(
-                          onTap: () {
-                            _productDetails(_products[index].id!);
-                          },
-                          child: Card(
-                            color: Theme.of(context).colorScheme.primaryContainer.withAlpha(100),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
-                            child: Row(
+                      return GestureDetector(
+                        onTap: () {
+                          _productDetails(_products[index].id!);
+                        },
+                        child: Card(
+                          color: Theme.of(context).colorScheme.secondaryContainer,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
                               children: [
-                                Expanded(
-                                    child: Text(_products[index].name)),
-                                Expanded(
-                                    child: Text(_products[index].id.toString())),
-                                Expanded(
-                                  child: IconButton(
-                                      onPressed: () {
-                                        _deleteItem(_products[index].id!);
-                                      },
-                                      icon: Icon(Icons.delete)),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                        child: Center(child: Text(_products[index].name, style: TextStyle(fontWeight: FontWeight.bold)))),
+                                    IconButton(
+                                        onPressed: () {
+                                          _deleteItem(_products[index].id!);
+                                        },
+                                        icon: Icon(Icons.delete)),
+                                  ],
                                 ),
                               ],
                             ),
@@ -120,5 +117,4 @@ class _ProductsPageState extends State<ProductsPage> {
       ),
     );
   }
-
 }

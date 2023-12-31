@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:male_naturapp/pages/finances_page.dart';
-import 'package:male_naturapp/pages/sales_page.dart';
 import 'package:male_naturapp/pages/stock_page.dart';
 import 'home_page.dart';
-import 'customers/customers_page.dart';
 
 enum Page {
-  clients,
   stock,
   home,
-  sales,
   finances
 }
 
@@ -47,18 +43,12 @@ class _RootPageState extends State<RootPage> {
     Page page = Page.values[value];
     _setCurrentIndex(value);
     switch(page) {
-      case Page.clients:
-        _setCurrentPage(CustomersPage());
-        _setTitle(CustomersPage.title);
       case Page.stock:
         _setCurrentPage(StockPage());
         _setTitle(StockPage.title);
       case Page.home:
         _setCurrentPage(HomePage());
         _setTitle(HomePage.title);
-      case Page.sales:
-        _setCurrentPage(SalesPage());
-        _setTitle(SalesPage.title);
       case Page.finances:
         _setCurrentPage(FinancesPage());
         _setTitle(FinancesPage.title);
@@ -80,13 +70,9 @@ class _RootPageState extends State<RootPage> {
       bottomNavigationBar: BottomNavigationBar(
         unselectedItemColor: Theme.of(context).colorScheme.onSecondary,
         selectedItemColor: Theme.of(context).colorScheme.onSecondary,
+        backgroundColor: Theme.of(context).colorScheme.secondary,
         currentIndex: _currentIndex,
         items: [
-          BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).colorScheme.secondary,
-            icon: CustomersPage.icon,
-            label: CustomersPage.title,
-          ),
           BottomNavigationBarItem(
             backgroundColor: Theme.of(context).colorScheme.secondary,
             icon: StockPage.icon,
@@ -99,11 +85,6 @@ class _RootPageState extends State<RootPage> {
           ),
           BottomNavigationBarItem(
             backgroundColor: Theme.of(context).colorScheme.secondary,
-            icon: SalesPage.icon,
-            label: SalesPage.title,
-          ),
-          BottomNavigationBarItem(
-            backgroundColor: Theme.of(context).colorScheme.secondary,
             icon: FinancesPage.icon,
             label: FinancesPage.title,
           ),
@@ -112,5 +93,4 @@ class _RootPageState extends State<RootPage> {
       ),
     );
   }
-
 }
