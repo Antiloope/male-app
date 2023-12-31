@@ -8,6 +8,7 @@ abstract class ProductService {
   Future<Product> getProductById(int id);
   Future<List<ProductCategory>> getAllCategories();
   Future<ProductCategory?> getCategoryByName(String name);
+  void editCategory(int id, String name);
   void delete(int id);
   void deleteCategory(int id);
 }

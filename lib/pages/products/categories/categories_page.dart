@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:male_naturapp/models/product_category.dart';
+import 'package:male_naturapp/pages/products/categories/edit_category_page.dart';
 import 'package:male_naturapp/pages/products/categories/new_category_page.dart';
 import 'package:male_naturapp/services/product/product_service.dart';
 import 'package:male_naturapp/services/product/product_service_provider.dart';
@@ -40,6 +41,16 @@ class _CategoriesPageState extends State<CategoriesPage> {
     });
   }
 
+  void _editItem(ProductCategory category) async {
+    final result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => EditCategoryPage(category)));
+    if (result != null && result == true) {
+      var categories = await productService.getAllCategories();
+      setState(() {
+        _categories = categories;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppBarFrame(
@@ -77,6 +88,11 @@ class _CategoriesPageState extends State<CategoriesPage> {
                             children: [
                               Expanded(
                                   child: Text(_categories[index].name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18))),
+                              IconButton(
+                                  onPressed: () {
+                                    _editItem(_categories[index]);
+                                  },
+                                  icon: Icon(Icons.edit)),
                               IconButton(
                                   onPressed: () {
                                     _deleteItem(_categories[index].id!);

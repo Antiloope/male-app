@@ -155,4 +155,11 @@ class ProductServiceSqlite implements ProductService {
 
     return maps.isEmpty ? null : List.generate(maps.length, (i) {return mapToCategory(maps[i]);})[0];
   }
+
+  @override
+  void editCategory(int id, String name) async {
+    Database database = DatabaseHelper().getConnection();
+
+    await database.update(_productCategoryTableName, [{_productCategoryNameColumnName: name}] as Map<String, Object?>, where: "$_productCategoryIdColumnName = $id");
+  }
 }
