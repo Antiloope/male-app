@@ -75,7 +75,7 @@ class _ProductsPageState extends State<ProductsPage> {
                   return Future(() => null);
                 },
                 child: ListView.builder(
-                    padding: EdgeInsets.symmetric(vertical: 5),
+                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                     itemCount: _products.length,
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(

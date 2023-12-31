@@ -65,28 +65,23 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   return Future(() => null);
                 },
                 child: ListView.builder(
-                    padding: EdgeInsets.symmetric(vertical: 3),
+                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                     itemCount: _categories.length,
-                    prototypeItem: SizedBox(
-                      height: 50,
-                    ),
                     itemBuilder: (BuildContext context, int index) {
-                      return SizedBox(
-                        height: 50,
-                        child: Card(
-                          color: Theme.of(context).colorScheme.primaryContainer.withAlpha(100),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+                      return Card(
+                        color: Theme.of(context).colorScheme.secondaryContainer,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(30,8,8,8),
                           child: Row(
                             children: [
                               Expanded(
-                                  child: Text(_categories[index].name)),
-                              Expanded(
-                                child: IconButton(
-                                    onPressed: () {
-                                      _deleteItem(_categories[index].id!);
-                                    },
-                                    icon: Icon(Icons.delete)),
-                              ),
+                                  child: Text(_categories[index].name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18))),
+                              IconButton(
+                                  onPressed: () {
+                                    _deleteItem(_categories[index].id!);
+                                  },
+                                  icon: Icon(Icons.delete)),
                             ],
                           ),
                         ),

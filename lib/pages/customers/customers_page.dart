@@ -76,34 +76,27 @@ class _CustomersPageState extends State<CustomersPage> {
                   return Future(() => null);
                 },
                 child: ListView.builder(
-                    padding: EdgeInsets.symmetric(vertical: 3),
+                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                     itemCount: _customers.length,
-                    prototypeItem: SizedBox(
-                      height: 50,
-                    ),
                     itemBuilder: (BuildContext context, int index) {
-                      return SizedBox(
-                        height: 50,
-                        child: GestureDetector(
-                          onTap: () {
-                            _customerDetails(_customers[index].id!);
-                          },
-                          child: Card(
-                            color: Theme.of(context).colorScheme.primaryContainer.withAlpha(100),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+                      return GestureDetector(
+                        onTap: () {
+                          _customerDetails(_customers[index].id!);
+                        },
+                        child: Card(
+                          color: Theme.of(context).colorScheme.secondaryContainer,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(30,8,8,8),
                             child: Row(
                               children: [
                                 Expanded(
-                                    child: Text(_customers[index].name)),
-                                Expanded(
-                                    child: Text(_customers[index].id.toString())),
-                                Expanded(
-                                  child: IconButton(
-                                      onPressed: () {
-                                        _deleteItem(_customers[index].id!);
-                                      },
-                                      icon: Icon(Icons.delete)),
-                                ),
+                                    child: Text(_customers[index].name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18))),
+                                IconButton(
+                                    onPressed: () {
+                                      _deleteItem(_customers[index].id!);
+                                    },
+                                    icon: Icon(Icons.delete)),
                               ],
                             ),
                           ),
