@@ -58,7 +58,7 @@ class _NewCategoryPageState extends State<NewCategoryPage> {
             padding: EdgeInsets.all(10),
             child: ElevatedButton(
               onPressed: _createCategory,
-              child: Text('Crear categoría'),
+              child: Text('Crear categoría', style: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer)),
             ),
           ),
         ],

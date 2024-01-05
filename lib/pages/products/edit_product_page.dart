@@ -6,30 +6,32 @@ import 'package:male_naturapp/services/product/product_service_provider.dart';
 import 'package:male_naturapp/widgets/app_bar_frame.dart';
 import 'package:male_naturapp/widgets/form_in_page.dart';
 
-class NewProductPage extends StatefulWidget {
-  NewProductPage({super.key});
+class EditProductPage extends StatefulWidget {
+  EditProductPage({required this.product, super.key});
 
-  static const String title = "Nuevo producto";
+  static const String title = "Editar producto";
+  final Product product;
 
   @override
-  _NewProductPageState createState() => _NewProductPageState();
+  _EditProductPageState createState() => _EditProductPageState();
 }
 
-class _NewProductPageState extends State<NewProductPage> {
-  _NewProductPageState() : productService = DefaultProductServiceProvider.getDefaultProductService();
-  
+class _EditProductPageState extends State<EditProductPage> {
+  _EditProductPageState() : productService = DefaultProductServiceProvider.getDefaultProductService();
+
   final ProductService productService;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _productNameController = TextEditingController();
   final _productDescriptionController = TextEditingController();
   final _productExternalIdController = TextEditingController();
 
-  void _createProduct() async {
+  void _editProduct() async {
     if (_formKey.currentState!.validate()) {
       ProductCategory? category = await productService.getCategoryByName(_selectedValue);
 
-      productService.save(
+      productService.editProduct(
           Product(
+            id: widget.product.id,
             name: _productNameController.text,
             externalId: _productExternalIdController.text,
             description: _productDescriptionController.text,
@@ -44,8 +46,12 @@ class _NewProductPageState extends State<NewProductPage> {
 
   @override
   Widget build(BuildContext context) {
+    _productNameController.text = widget.product.name;
+    _productExternalIdController.text = widget.product.externalId.toString();
+    _productDescriptionController.text = widget.product.description;
+
     return AppBarFrame(
-      title: NewProductPage.title,
+      title: EditProductPage.title,
       body: FormInPage(
         formKey: _formKey,
         items: [
@@ -103,7 +109,7 @@ class _NewProductPageState extends State<NewProductPage> {
               }
               else {
                 List<ProductCategory> categories = snapshot.data!;
-                _selectedValue = categories[0].name;
+                _selectedValue = categories.singleWhere((category) => category.id == widget.product.category).name;
                 return DropdownButtonFormField(
                   value: _selectedValue,
                   items: categories.map((ProductCategory e){
@@ -134,8 +140,8 @@ class _NewProductPageState extends State<NewProductPage> {
           Padding(
             padding: EdgeInsets.all(10),
             child: ElevatedButton(
-              onPressed: _createProduct,
-              child: Text('Crear producto', style: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer)),
+              onPressed: _editProduct,
+              child: Text('Editar producto', style: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer)),
             ),
           ),
         ],

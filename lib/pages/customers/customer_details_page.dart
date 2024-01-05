@@ -11,7 +11,6 @@ class CustomerDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    customerService.getCustomerById(customerId);
     return FutureBuilder<Customer>(
       future: customerService.getCustomerById(customerId),
       builder: (BuildContext context, AsyncSnapshot<Customer> snapshot) {

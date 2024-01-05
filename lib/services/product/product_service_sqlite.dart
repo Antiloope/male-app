@@ -92,6 +92,21 @@ class ProductServiceSqlite implements ProductService {
   }
 
   @override
+  Future<Product> editProduct(Product product) async {
+    Database database = DatabaseHelper().getConnection();
+    int id = product.id!;
+
+    database.update(
+      _productTableName,
+      productToMap(product),
+      where: '$_productIdColumnName = $id',
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+
+    return product;
+  }
+
+  @override
   Future<ProductCategory> saveCategory(ProductCategory category) async {
     Database database = DatabaseHelper().getConnection();
 
@@ -148,12 +163,21 @@ class ProductServiceSqlite implements ProductService {
   }
 
   @override
-  Future<ProductCategory?> getCategoryByName(String name) async {
+  Future<ProductCategory> getCategoryByName(String name) async {
     Database database = DatabaseHelper().getConnection();
 
     final List<Map<String, dynamic>> maps = await database.query(_productCategoryTableName, where: "$_productCategoryNameColumnName = '$name'");
 
-    return maps.isEmpty ? null : List.generate(maps.length, (i) {return mapToCategory(maps[i]);})[0];
+    return List.generate(maps.length, (i) {return mapToCategory(maps[i]);})[0];
+  }
+
+  @override
+  Future<ProductCategory> getCategoryById(int id) async {
+    Database database = DatabaseHelper().getConnection();
+
+    final List<Map<String, dynamic>> maps = await database.query(_productCategoryTableName, where: "$_productCategoryIdColumnName = $id");
+
+    return List.generate(maps.length, (i) {return mapToCategory(maps[i]);})[0];
   }
 
   @override
