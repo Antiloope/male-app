@@ -93,9 +93,26 @@ class _CustomersPageState extends State<CustomersPage> {
                                 Expanded(
                                     child: Text(_customers[index].name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18))),
                                 IconButton(
-                                    onPressed: () {
-                                      _deleteItem(_customers[index].id!);
-                                    },
+                                    onPressed: () => showDialog<String>(
+                                        context: context,
+                                        builder: (BuildContext context) => AlertDialog(
+                                          title: const Text('Eliminación de cliente'),
+                                          content: const Text('Confirmas la eliminación del cliente?'),
+                                          actions: <Widget>[
+                                            TextButton(
+                                                onPressed: () => Navigator.pop(context, 'Cancelar'),
+                                                child: Text('Cancelar', style: TextStyle(color: Theme.of(context).colorScheme.onPrimary))
+                                            ),
+                                            TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context, 'Ok');
+                                                  _deleteItem(_customers[index].id!);
+                                                },
+                                                child: Text('Ok', style: TextStyle(color: Theme.of(context).colorScheme.onPrimary))
+                                            ),
+                                          ],
+                                        )
+                                    ),
                                     icon: Icon(Icons.delete)),
                               ],
                             ),

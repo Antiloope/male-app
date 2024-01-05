@@ -94,9 +94,26 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                   },
                                   icon: Icon(Icons.edit)),
                               IconButton(
-                                  onPressed: () {
-                                    _deleteItem(_categories[index].id!);
-                                  },
+                                  onPressed: () => showDialog<String>(
+                                      context: context,
+                                      builder: (BuildContext context) => AlertDialog(
+                                        title: const Text('Eliminación de categoría'),
+                                        content: const Text('Confirmas la eliminación de la categoría?'),
+                                        actions: <Widget>[
+                                          TextButton(
+                                              onPressed: () => Navigator.pop(context, 'Cancelar'),
+                                              child: Text('Cancelar', style: TextStyle(color: Theme.of(context).colorScheme.onPrimary))
+                                          ),
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context, 'Ok');
+                                                _deleteItem(_categories[index].id!);
+                                              },
+                                              child: Text('Ok', style: TextStyle(color: Theme.of(context).colorScheme.onPrimary))
+                                          ),
+                                        ],
+                                      )
+                                  ),
                                   icon: Icon(Icons.delete)),
                             ],
                           ),

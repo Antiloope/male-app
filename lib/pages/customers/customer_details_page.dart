@@ -25,14 +25,14 @@ class CustomerDetailsPage extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(
               title: Center(child: Text(customer.name, style: TextStyle(fontWeight: FontWeight.bold))),
-              backgroundColor: Theme.of(context).colorScheme.secondary,
+              backgroundColor: Theme.of(context).colorScheme.primary,
             ),
             body: ListView(
               padding: EdgeInsets.all(10),
               children: [
                 Card(
                   margin: EdgeInsets.all(6),
-                  color: Colors.white70,
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   child: Container(
                     padding: EdgeInsets.all(10),
                     child: Column(
@@ -76,7 +76,7 @@ class CustomerDetailsPage extends StatelessWidget {
                 ),
                 Card(
                   margin: EdgeInsets.all(6),
-                  color: Colors.white70,
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   child: Container(
                     padding: EdgeInsets.all(10),
                     child: Column(
@@ -92,7 +92,7 @@ class CustomerDetailsPage extends StatelessWidget {
                 ),
                 Card(
                   margin: EdgeInsets.all(6),
-                  color: Colors.white70,
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   child: Container(
                     padding: EdgeInsets.all(10),
                     child: Column(

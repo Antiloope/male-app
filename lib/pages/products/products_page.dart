@@ -94,9 +94,26 @@ class _ProductsPageState extends State<ProductsPage> {
                                     Expanded(
                                         child: Center(child: Text(_products[index].name, style: TextStyle(fontWeight: FontWeight.bold)))),
                                     IconButton(
-                                        onPressed: () {
-                                          _deleteItem(_products[index].id!);
-                                        },
+                                        onPressed: () => showDialog<String>(
+                                          context: context,
+                                          builder: (BuildContext context) => AlertDialog(
+                                            title: const Text('Eliminación de producto'),
+                                            content: const Text('Confirmas la eliminación del producto?'),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(context, 'Cancelar'),
+                                                child: Text('Cancelar', style: TextStyle(color: Theme.of(context).colorScheme.onPrimary))
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context, 'Ok');
+                                                  _deleteItem(_products[index].id!);
+                                                },
+                                                child: Text('Ok', style: TextStyle(color: Theme.of(context).colorScheme.onPrimary))
+                                              ),
+                                            ],
+                                          )
+                                        ),
                                         icon: Icon(Icons.delete)),
                                   ],
                                 ),
