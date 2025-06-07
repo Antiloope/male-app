@@ -52,8 +52,6 @@ class _RootPageState extends State<RootPage> {
       case Page.finances:
         _setCurrentPage(FinancesPage());
         _setTitle(FinancesPage.title);
-      default:
-        break;
     }
   }
 
@@ -68,8 +66,11 @@ class _RootPageState extends State<RootPage> {
       ),
       body: _currentPage,
       bottomNavigationBar: BottomNavigationBar(
-        unselectedItemColor: Theme.of(context).colorScheme.onSecondary,
+        type: BottomNavigationBarType.fixed,
+        unselectedItemColor: Theme.of(context).colorScheme.onSecondary.withOpacity(0.6),
         selectedItemColor: Theme.of(context).colorScheme.onSecondary,
+        selectedFontSize: 16,
+        unselectedFontSize: 12,
         backgroundColor: Theme.of(context).colorScheme.secondary,
         currentIndex: _currentIndex,
         items: [

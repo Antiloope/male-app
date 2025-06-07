@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:male_naturapp/models/product_category.dart';
 import 'package:male_naturapp/pages/products/categories/edit_category_page.dart';
@@ -6,6 +5,10 @@ import 'package:male_naturapp/pages/products/categories/new_category_page.dart';
 import 'package:male_naturapp/services/product/product_service.dart';
 import 'package:male_naturapp/services/product/product_service_provider.dart';
 import 'package:male_naturapp/widgets/app_bar_frame.dart';
+import 'package:male_naturapp/widgets/custom_search_bar.dart';
+import 'package:male_naturapp/widgets/filter_sort_row.dart';
+import 'package:male_naturapp/widgets/dismissible_list_item.dart';
+import 'package:male_naturapp/widgets/info_card.dart';
 
 class CategoriesPage extends StatefulWidget {
   CategoriesPage({super.key});
@@ -20,34 +23,47 @@ class _CategoriesPageState extends State<CategoriesPage> {
   _CategoriesPageState() : productService = DefaultProductServiceProvider.getDefaultProductService();
 
   late final ProductService productService;
+  List<ProductCategory> _allCategories = [];
+  List<ProductCategory> _filteredCategories = [];
+  String _searchQuery = '';
+  String _sortBy = 'name'; // name
+  bool _sortAscending = true;
 
-  List<ProductCategory> _categories = [];
+  void _applyFilters() {
+    setState(() {
+      _filteredCategories = _allCategories.where((category) {
+        bool matchesSearch = category.name.toLowerCase().contains(_searchQuery.toLowerCase());
+        
+        return matchesSearch;
+      }).toList();
+
+      _sortItems();
+    });
+  }
+
+  void _sortItems() {
+    _filteredCategories.sort((a, b) {
+      int comparison = a.name.compareTo(b.name);
+      return _sortAscending ? comparison : -comparison;
+    });
+  }
 
   Future<void> _newCategory() async {
     final result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => NewCategoryPage()));
     if (result != null && result == true) {
-      var categories = await productService.getAllCategories();
-      setState(() {
-        _categories = categories;
-      });
+      setState(() {});
     }
   }
 
   void _deleteItem(int id) async {
     productService.deleteCategory(id);
-    var categories = await productService.getAllCategories();
-    setState(() {
-      _categories = categories;
-    });
+    setState(() {});
   }
 
   void _editItem(ProductCategory category) async {
     final result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => EditCategoryPage(category)));
     if (result != null && result == true) {
-      var categories = await productService.getAllCategories();
-      setState(() {
-        _categories = categories;
-      });
+      setState(() {});
     }
   }
 
@@ -55,75 +71,93 @@ class _CategoriesPageState extends State<CategoriesPage> {
   Widget build(BuildContext context) {
     return AppBarFrame(
       title: CategoriesPage.title,
-      body: Scaffold(
-        body: FutureBuilder<List<ProductCategory>>(
-          future: productService.getAllCategories(),
-          builder: (BuildContext context, AsyncSnapshot<List<ProductCategory>> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
-            }
-            else if (snapshot.hasError) {
-              return Text('Error al cargar los datos');
-            }
-            else {
-              _categories = snapshot.data!;
-              return RefreshIndicator(
-                onRefresh: () async {
-                  var categories = await productService.getAllCategories();
-                  setState(() {
-                    _categories = categories;
-                  });
-                  return Future(() => null);
-                },
-                child: ListView.builder(
-                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                    itemCount: _categories.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Card(
-                        color: Theme.of(context).colorScheme.secondaryContainer,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(30,8,8,8),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                  child: Text(_categories[index].name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18))),
-                              IconButton(
-                                  onPressed: () {
-                                    _editItem(_categories[index]);
-                                  },
-                                  icon: Icon(Icons.edit)),
-                              IconButton(
-                                  onPressed: () => showDialog<String>(
-                                      context: context,
-                                      builder: (BuildContext context) => AlertDialog(
-                                        title: const Text('Eliminación de categoría'),
-                                        content: const Text('Confirmas la eliminación de la categoría?'),
-                                        actions: <Widget>[
-                                          TextButton(
-                                              onPressed: () => Navigator.pop(context, 'Cancelar'),
-                                              child: Text('Cancelar', style: TextStyle(color: Theme.of(context).colorScheme.onPrimary))
-                                          ),
-                                          TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(context, 'Ok');
-                                                _deleteItem(_categories[index].id!);
-                                              },
-                                              child: Text('Ok', style: TextStyle(color: Theme.of(context).colorScheme.onPrimary))
-                                          ),
-                                        ],
-                                      )
-                                  ),
-                                  icon: Icon(Icons.delete)),
+      body: Column(
+        children: [
+          // Barra de búsqueda usando widget componentizado
+          CustomSearchBar(
+            hintText: 'Buscar categorías...',
+            onChanged: (value) {
+              _searchQuery = value;
+              _applyFilters();
+            },
+          ),
+          // Filtros y ordenamiento usando widget componentizado
+          FilterSortRow(
+            sortOptions: [
+              DropdownMenuItem(value: 'name', child: Text('Nombre')),
+            ],
+            sortBy: _sortBy,
+            onSortChanged: (String? newValue) {
+              if (newValue != null) {
+                _sortBy = newValue;
+                _applyFilters();
+              }
+            },
+            sortAscending: _sortAscending,
+            onSortDirectionChanged: () {
+              _sortAscending = !_sortAscending;
+              _applyFilters();
+            },
+          ),
+          Divider(),
+          // Lista de categorías
+          Expanded(
+            child: FutureBuilder<List<ProductCategory>>(
+              future: productService.getAllCategories(),
+              builder: (BuildContext context, AsyncSnapshot<List<ProductCategory>> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                else if (snapshot.hasError) {
+                  return Center(child: Text('Error al cargar las categorías'));
+                }
+                else {
+                  _allCategories = snapshot.data!;
+                  if (_filteredCategories.isEmpty && _searchQuery.isEmpty) {
+                    _filteredCategories = _allCategories;
+                    _sortItems();
+                  }
+                  
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      setState(() {});
+                      return Future(() => null);
+                    },
+                    child: ListView.builder(
+                      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+                      itemCount: _filteredCategories.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final category = _filteredCategories[index];
+                        
+                        return DismissibleListItem(
+                          itemId: category.id.toString(),
+                          itemName: category.name,
+                          deleteTitle: 'Eliminación de categoría',
+                          deleteMessage: '¿Confirmas la eliminación de "${category.name}"?',
+                          deleteSuccessMessage: 'Categoría "${category.name}" eliminada',
+                          onDelete: () => _deleteItem(category.id!),
+                          child: InfoCard(
+                            title: category.name,
+                            fields: [
+                              InfoCardField(
+                                value: 'Categoría de productos',
+                                icon: Icons.category,
+                              ),
                             ],
+                            trailing: IconButton(
+                              onPressed: () => _editItem(category),
+                              icon: Icon(Icons.edit, color: Theme.of(context).colorScheme.primary),
+                            ),
                           ),
-                        ),
-                      );
-                    }),
-              );
-            }
-          },
-        ),
+                        );
+                      },
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _newCategory,
@@ -131,5 +165,4 @@ class _CategoriesPageState extends State<CategoriesPage> {
       ),
     );
   }
-
 }

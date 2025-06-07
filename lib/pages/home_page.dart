@@ -10,6 +10,7 @@ class HomePage extends StatelessWidget {
 
   static Icon icon = Icon(Icons.home);
   static String title = "Home";
+  static String welcomeMessage = "Buen día Male!";
 
   List<Widget> _generateQuickAccessList(BuildContext context) {
     return [
@@ -22,26 +23,36 @@ class HomePage extends StatelessWidget {
   List<Widget> _generateHomeWidgets(BuildContext context) {
     final quickAccessList = _generateQuickAccessList(context);
     return [
-      Flexible(
-        flex: 1,
-        child: Container(
-          margin: EdgeInsets.all(10),
-          decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.background,
-              borderRadius: BorderRadius.circular(25),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(100),
-                  blurRadius: 8,
-                  offset: Offset(2,2),
-                )
-              ]
+      Container(
+        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        child: Text(
+          welcomeMessage,
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
-          child: GridView.count(
-            crossAxisCount: 4,
-            padding: EdgeInsets.all(8),
-            children: quickAccessList,
-          ),
+          textAlign: TextAlign.center,
+        ),
+      ),  
+      Container(
+        margin: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+            color: Color(0xFFFCEEEE),
+            borderRadius: BorderRadius.circular(25),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(50),
+                blurRadius: 8,
+                offset: Offset(1,1),
+              )
+            ]
+        ),
+        child: GridView.count(
+          crossAxisCount: 4,
+          padding: EdgeInsets.all(8),
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          children: quickAccessList,
         ),
       ),
     ];
