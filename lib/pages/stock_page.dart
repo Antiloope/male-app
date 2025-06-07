@@ -35,13 +35,14 @@ class _StockPageState extends State<StockPage> {
   String _selectedCategory = 'Todos';
   String _sortBy = 'name';
   bool _sortAscending = true;
-  late Future<List<StockItem>> _stockItemsFuture;
+  bool _isLoading = true;
+  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
-    _stockItemsFuture = stockService.getAllStockItems();
     _loadCategories();
+    _loadStockItems();
   }
 
   Future<void> _loadCategories() async {
@@ -49,6 +50,29 @@ class _StockPageState extends State<StockPage> {
       _categories = await productService.getAllCategories();
     } catch (e) {
       _categories = [];
+    }
+  }
+
+  Future<void> _loadStockItems() async {
+    try {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+
+      final stockItems = await stockService.getAllStockItems();
+      
+      setState(() {
+        _allStockItems = stockItems;
+        _isLoading = false;
+        // Aplicar filtros con los nuevos datos
+        _applyFilters();
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = 'Error al cargar los datos de stock';
+      });
     }
   }
 
@@ -105,12 +129,6 @@ class _StockPageState extends State<StockPage> {
     return ['Todos', ...categoryNames];
   }
 
-  void _refreshStockItems() {
-    setState(() {
-      _stockItemsFuture = stockService.getAllStockItems();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -153,78 +171,60 @@ class _StockPageState extends State<StockPage> {
           ),
           Divider(),
           Expanded(
-            child: FutureBuilder<List<StockItem>>(
-              future: _stockItemsFuture,
-              builder: (BuildContext context, AsyncSnapshot<List<StockItem>> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                else if (snapshot.hasError) {
-                  return Center(child: Text('Error al cargar los datos de stock'));
-                }
-                else {
-                  _allStockItems = snapshot.data!;
-                  if (_filteredStockItems.isEmpty && _searchQuery.isEmpty && _selectedCategory == 'Todos') {
-                    _filteredStockItems = _allStockItems;
-                    _sortItems();
-                  }
-                  
-                  return RefreshIndicator(
-                    onRefresh: () async {
-                      _refreshStockItems();
-                      return Future(() => null);
-                    },
-                    child: ListView.builder(
-                      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
-                      itemCount: _filteredStockItems.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final item = _filteredStockItems[index];
-                        final categoryName = _getCategoryName(item.categoryId);
-                        
-                        return InfoCard(
-                          title: item.name,
-                          subtitle: item.description,
-                          fields: [
-                            InfoCardField(
-                              value: categoryName,
-                              icon: Icons.category,
-                            ),
-                          ],
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(12),
+            child: _isLoading
+                ? Center(child: CircularProgressIndicator())
+                : _errorMessage != null
+                    ? Center(child: Text(_errorMessage!))
+                    : RefreshIndicator(
+                        onRefresh: _loadStockItems,
+                        child: ListView.builder(
+                          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+                          itemCount: _filteredStockItems.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final item = _filteredStockItems[index];
+                            final categoryName = _getCategoryName(item.categoryId);
+                            
+                            return InfoCard(
+                              title: item.name,
+                              subtitle: item.description,
+                              fields: [
+                                InfoCardField(
+                                  value: categoryName,
+                                  icon: Icons.category,
                                 ),
-                                child: Text(
-                                  '${item.quantity}',
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.onSecondaryContainer,
-                                    fontWeight: FontWeight.bold,
+                              ],
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      '${item.quantity}',
+                                      style: TextStyle(
+                                        color: Theme.of(context).colorScheme.onSecondaryContainer,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    '\$${item.price.toStringAsFixed(2)}',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: Theme.of(context).colorScheme.onSecondaryContainer,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              SizedBox(width: 8),
-                              Text(
-                                '\$${item.price.toStringAsFixed(2)}',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: Theme.of(context).colorScheme.onSecondaryContainer,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                }
-              },
-            ),
+                            );
+                          },
+                        ),
+                      ),
           ),
         ],
       ),
@@ -237,7 +237,7 @@ class _StockPageState extends State<StockPage> {
                 MaterialPageRoute(builder: (context) => StockEntryTypeSelectionPage())
               );
               if (result != null && result == true) {
-                _refreshStockItems();
+                _loadStockItems(); // Recargar datos después del ingreso
               }
             },
             label: Text('Ingreso'),
@@ -253,7 +253,7 @@ class _StockPageState extends State<StockPage> {
                 MaterialPageRoute(builder: (context) => StockExitPage())
               );
               if (result != null && result == true) {
-                _refreshStockItems();
+                _loadStockItems(); // Recargar datos después del egreso
               }
             },
             label: Text('Egreso'),
